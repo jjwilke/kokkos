@@ -55,6 +55,10 @@
 #include <thrust/sort.h>
 #endif
 
+template <int T>
+struct Print;
+
+
 namespace Example {
 
 //----------------------------------------------------------------------------
@@ -162,7 +166,7 @@ struct GrowArrayFunctor {
 
           // Team's exclusive scan of threads' contributions, with global offset.
           // This thread writes its buffer into [ team_offset .. team_offset + local_count )
-          const int team_offset = member.team_scan( local_count , & *m_search_count );
+          const int team_offset = member.team_scan( local_count , & m_search_count() );
 
           // Copy locally buffered entries into global array:
           for ( int i = 0 ; i < local_count ; ++i ) {
@@ -210,7 +214,7 @@ void grow_array( int array_length , int search_length , int print = 1 )
   Kokkos::deep_copy( count , functor.m_search_count );
 
   // Sort array:
-  SortView< ExecSpace >( functor.m_search_array , 0 , *count );
+  SortView< ExecSpace >( functor.m_search_array , 0 , count() );
 
   // Mirror the results:
   typename Kokkos::View<int*,ExecSpace>::HostMirror results = Kokkos::create_mirror_view( functor.m_search_array );
@@ -219,7 +223,7 @@ void grow_array( int array_length , int search_length , int print = 1 )
   // Verify results:
   int result_error_count = 0 ;
   int flags_error_count = 0 ;
-  for ( int i = 0 ; i < *count ; ++i ) {
+  for ( int i = 0 ; i < count() ; ++i ) {
     const int index = results(i);
     const int entry = index >> FunctorType::SHIFT ;
     const int bit   = 1 << ( index & FunctorType::MASK );

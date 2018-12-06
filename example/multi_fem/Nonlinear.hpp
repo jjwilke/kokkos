@@ -345,7 +345,6 @@ PerformanceData run( const typename FixtureType::FEMeshType & mesh ,
     // Fill linear system coefficients:
 
     wall_clock.reset();
-
     fill( jacobian.coefficients.dimension_0(), 0 , jacobian.coefficients );
     fill( residual.dimension_0() , 0 , residual );
 

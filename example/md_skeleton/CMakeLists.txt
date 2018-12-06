@@ -7,10 +7,5 @@ SET(LIBRARIES "")
 
 FILE(GLOB SOURCES *.cpp )
 
-TRIBITS_ADD_EXECUTABLE(
-  md_skeleton 
-  SOURCES ${SOURCES}
-  COMM serial mpi
-  DEPLIBS ${LIBRARIES}
-  )
+Kokkos_ADD_EXAMPLE_EXECUTABLE(md_skeleton "${SOURCES}")
 

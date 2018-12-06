@@ -19,9 +19,9 @@ SET(INSTALL_BIN_DIR bin CACHE PATH "Installation directory for executables")
 SET(INSTALL_INCLUDE_DIR ${KOKKOS_HEADER_DIR} CACHE PATH
   "Installation directory for header files")
 IF(WIN32 AND NOT CYGWIN)
-  SET(DEF_INSTALL_CMAKE_DIR CMake)
+  SET(DEF_INSTALL_CMAKE_DIR cmake)
 ELSE()
-  SET(DEF_INSTALL_CMAKE_DIR lib/CMake/Kokkos)
+  SET(DEF_INSTALL_CMAKE_DIR lib/cmake/Kokkos)
 ENDIF()
 
 SET(INSTALL_CMAKE_DIR ${DEF_INSTALL_CMAKE_DIR} CACHE PATH
@@ -51,8 +51,6 @@ else()
 SET(Kokkos_INCLUDE_DIRS_RET ${Kokkos_INCLUDE_DIRS})
 endif()
 
-INCLUDE_DIRECTORIES(${Kokkos_INCLUDE_DIRS})
-
 IF(KOKKOS_SEPARATE_LIBS)
   # Sources come from makefile-generated kokkos_generated_settings.cmake file
   # Separate libs need to separate the sources
@@ -64,15 +62,26 @@ IF(KOKKOS_SEPARATE_LIBS)
     ${KOKKOS_CORE_SRCS}
   )
 
+  target_include_directories(kokkoscore INTERFACE
+      $<INSTALL_INTERFACE:include>
+  )
+
+  foreach(inc IN LISTS KOKKOS_TPL_INCLUDE_DIRS)
+    target_include_directories(kokkoscore PUBLIC
+      $<BUILD_INTERFACE:${inc}>
+    )
+  endforeach()
+
+  foreach(inc IN LISTS Kokkos_INCLUDE_DIRS)
+    target_include_directories(kokkoscore PUBLIC
+      $<BUILD_INTERFACE:${inc}>
+    )
+  endforeach()
+
+
   target_compile_options(
     kokkoscore
     PUBLIC $<$<COMPILE_LANGUAGE:CXX>:${KOKKOS_CXX_FLAGS}>
-  )
-
-  target_include_directories(
-    kokkoscore
-    PUBLIC
-    ${KOKKOS_TPL_INCLUDE_DIRS}
   )
 
   foreach(lib IN LISTS KOKKOS_TPL_LIBRARY_NAMES)
@@ -87,12 +96,17 @@ IF(KOKKOS_SEPARATE_LIBS)
   target_link_libraries(kokkoscore PUBLIC "${KOKKOS_LINK_FLAGS}")
 
   # Install the kokkoscore library
-  INSTALL (TARGETS kokkoscore
-           EXPORT KokkosTargets
+  install(EXPORT kokkoscore
+          FILE kokkosCoreTargets.cmake
+          #NAMESPACE kokkos::
+          DESTINATION ${INSTALL_CMAKE_DIR})
+
+  # Install the kokkocontainers library
+  INSTALL (TARGETS kokkoscore EXPORT kokkoscore
+           #EXPORT KokkosTargets
            ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
            LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
-           RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
-  )
+           RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 
   # kokkoscontainers
   if (DEFINED KOKKOS_CONTAINERS_SRCS)
@@ -107,9 +121,14 @@ IF(KOKKOS_SEPARATE_LIBS)
     kokkoscore
   )
 
+  install(EXPORT kokkoscontainers
+          FILE kokkosContainersTargets.cmake
+          #NAMESPACE kokkos::
+          DESTINATION ${INSTALL_CMAKE_DIR})
+
   # Install the kokkocontainers library
-  INSTALL (TARGETS kokkoscontainers
-           EXPORT KokkosTargets
+  INSTALL (TARGETS kokkoscontainers EXPORT kokkoscontainers
+           #EXPORT KokkosTargets
            ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
            LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
            RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
@@ -120,23 +139,36 @@ IF(KOKKOS_SEPARATE_LIBS)
     INTERFACE
   )
 
-  target_include_directories(
-    kokkosalgorithms
-    INTERFACE ${Kokkos_SOURCE_DIR}/algorithms/src
-  )
+ # No longer needed - target_link should bring in correct includes
+ # kokkos_build should only get invoked without Trilions
+ # which means "modern" Cmake >=3 is required
+ # target_include_directories(
+ #   kokkosalgorithms
+ #   INTERFACE ${Kokkos_SOURCE_DIR}/algorithms/src
+ # )
 
   TARGET_LINK_LIBRARIES(
     kokkosalgorithms
     INTERFACE kokkoscore
   )
 
-  # Install the kokkoalgorithms library
-  INSTALL (TARGETS kokkosalgorithms
+  install(EXPORT kokkosalgorithms 
+          FILE kokkosAlgorithmsTargets.cmake
+          #NAMESPACE kokkos::
+          DESTINATION ${INSTALL_CMAKE_DIR})
+
+  # Install the kokkocontainers library
+  INSTALL (TARGETS kokkosalgorithms EXPORT kokkosalgorithms
+           #EXPORT KokkosTargets
            ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
            LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
            RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 
   SET (Kokkos_LIBRARIES_NAMES kokkoscore kokkoscontainers kokkosalgorithms)
+
+  export(TARGETS kokkoscore kokkosalgorithms kokkoscontainers
+         #NAMESPACE kokkos::
+         FILE kokkosTargets.cmake)
 
 ELSE()
   # kokkos
@@ -151,11 +183,30 @@ ELSE()
     PUBLIC $<$<COMPILE_LANGUAGE:CXX>:${KOKKOS_CXX_FLAGS}>
   )
 
-  target_include_directories(
-    kokkos
-    PUBLIC
-    ${KOKKOS_TPL_INCLUDE_DIRS}
+  target_include_directories(kokkos INTERFACE
+    $<INSTALL_INTERFACE:include>
   )
+
+  foreach(inc IN LISTS KOKKOS_TPL_INCLUDE_DIRS)
+    target_include_directories(kokkos PUBLIC
+      $<BUILD_INTERFACE:${inc}>
+    )
+  endforeach()
+
+  foreach(inc IN LISTS Kokkos_INCLUDE_DIRS)
+    target_include_directories(kokkos PUBLIC
+      $<BUILD_INTERFACE:${inc}>
+    )
+  endforeach()
+
+  # Remove: specify as build/install interface above
+  # kokkos_build should only get invoked without Trilions
+  # which means "modern" Cmake >=3 is required
+  # target_include_directories(
+  #  kokkos
+  #  PUBLIC
+  #  ${KOKKOS_TPL_INCLUDE_DIRS}
+  #)
 
   foreach(lib IN LISTS KOKKOS_TPL_LIBRARY_NAMES)
     if ("${lib}" STREQUAL "cuda")
@@ -168,33 +219,47 @@ ELSE()
 
   target_link_libraries(kokkos PUBLIC "${KOKKOS_LINK_FLAGS}")
 
-  # Install the kokkos library
-  INSTALL (TARGETS kokkos
-           EXPORT KokkosTargets
-           ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
-           LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
-           RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+  install(TARGETS kokkos EXPORT kokkos
+          INCLUDES DESTINATION include
+          ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
+          LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
+          RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 
+  install(EXPORT kokkos
+          FILE KokkosTargets.cmake
+          #NAMESPACE kokkos::
+          DESTINATION ${INSTALL_CMAKE_DIR})
+
+  export(TARGETS kokkos
+         #NAMESPACE kokkos::
+         FILE KokkosTargets.cmake)
 
   SET (Kokkos_LIBRARIES_NAMES kokkos)
-
 endif()  # KOKKOS_SEPARATE_LIBS
 
+include(CMakePackageConfigHelpers)
+configure_package_config_file(cmake/kokkosConfig.cmake.in
+                              "${Kokkos_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/kokkosConfig.cmake"
+                              INSTALL_DESTINATION ${INSTALL_CMAKE_DIR})
+write_basic_package_version_file("${Kokkos_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/kokkosConfigVersion.cmake"
+                                 VERSION "${Kokkos_VERSION_MAJOR}.${Kokkos_VERSION_MINOR}.${Kokkos_VERSION_PATCH}"
+                                 COMPATIBILITY SameMajorVersion)
+
 # Install the kokkos headers
-INSTALL (DIRECTORY
-         EXPORT KokkosTargets
+INSTALL (DIRECTORY EXPORT kokkos
+         #EXPORT KokkosTargets
          ${Kokkos_SOURCE_DIR}/core/src/
          DESTINATION ${KOKKOS_HEADER_DIR}
          FILES_MATCHING PATTERN "*.hpp"
 )
-INSTALL (DIRECTORY
-         EXPORT KokkosTargets
+INSTALL (DIRECTORY EXPORT kokkos
+         #EXPORT KokkosTargets
          ${Kokkos_SOURCE_DIR}/containers/src/
          DESTINATION ${KOKKOS_HEADER_DIR}
          FILES_MATCHING PATTERN "*.hpp"
 )
-INSTALL (DIRECTORY
-         EXPORT KokkosTargets
+INSTALL (DIRECTORY EXPORT kokkos
+         #EXPORT KokkosTargets
          ${Kokkos_SOURCE_DIR}/algorithms/src/
          DESTINATION ${KOKKOS_HEADER_DIR}
          FILES_MATCHING PATTERN "*.hpp"
@@ -206,36 +271,36 @@ INSTALL (FILES
 )
 
 # Add all targets to the build-tree export set
-export(TARGETS ${Kokkos_LIBRARIES_NAMES}
-  FILE "${Kokkos_BINARY_DIR}/KokkosTargets.cmake")
+# done above already
+# all of this is done above
+# export(TARGETS ${Kokkos_LIBRARIES_NAMES}
+#  FILE "${Kokkos_BINARY_DIR}/KokkosTargets.cmake")
 
 # Export the package for use from the build-tree
 # (this registers the build-tree with a global CMake-registry)
-export(PACKAGE Kokkos)
+export(PACKAGE kokkos)
 
 # Create the KokkosConfig.cmake and KokkosConfigVersion files
-file(RELATIVE_PATH REL_INCLUDE_DIR "${INSTALL_CMAKE_DIR}"
-   "${INSTALL_INCLUDE_DIR}")
+#file(RELATIVE_PATH REL_INCLUDE_DIR "${INSTALL_CMAKE_DIR}"
+#   "${INSTALL_INCLUDE_DIR}")
 # ... for the build tree
-set(CONF_INCLUDE_DIRS "${Kokkos_SOURCE_DIR}" "${Kokkos_BINARY_DIR}")
-configure_file(${Kokkos_SOURCE_DIR}/cmake/KokkosConfig.cmake.in
-  "${Kokkos_BINARY_DIR}/KokkosConfig.cmake" @ONLY)
+# This is no longer necessary - build/interface includes now distinguished
+#set(CONF_INCLUDE_DIRS "${Kokkos_SOURCE_DIR}" "${Kokkos_BINARY_DIR}")
+#configure_file(${Kokkos_SOURCE_DIR}/cmake/KokkosConfig.cmake.in
+#  "${Kokkos_BINARY_DIR}/KokkosConfig.cmake" @ONLY)
 # ... for the install tree
-set(CONF_INCLUDE_DIRS "\${Kokkos_CMAKE_DIR}/${REL_INCLUDE_DIR}")
-configure_file(${Kokkos_SOURCE_DIR}/cmake/KokkosConfig.cmake.in
-  "${Kokkos_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/KokkosConfig.cmake" @ONLY)
+#set(CONF_INCLUDE_DIRS "\${Kokkos_CMAKE_DIR}/${REL_INCLUDE_DIR}")
+#configure_file(${Kokkos_SOURCE_DIR}/cmake/KokkosConfig.cmake.in
+#  "${Kokkos_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/KokkosConfig.cmake" @ONLY)
 
 # Install the KokkosConfig.cmake and KokkosConfigVersion.cmake
 install(FILES
-  "${Kokkos_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/KokkosConfig.cmake"
+  "${Kokkos_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/kokkosConfig.cmake"
+  "${Kokkos_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/kokkosConfigVersion.cmake"
   DESTINATION "${INSTALL_CMAKE_DIR}")
-
-#This seems not to do anything?
-#message(STATUS "KokkosTargets: " ${KokkosTargets})
-# Install the export set for use with the install-tree
-INSTALL(EXPORT KokkosTargets DESTINATION
-       "${INSTALL_CMAKE_DIR}")
 
 # build and install pkgconfig file
 CONFIGURE_FILE(core/src/kokkos.pc.in kokkos.pc @ONLY)
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/kokkos.pc DESTINATION lib/pkgconfig)
+
+

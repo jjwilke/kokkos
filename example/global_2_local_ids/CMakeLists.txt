@@ -8,10 +8,6 @@ SET(SOURCES
   G2L_Main.cpp 
   )
 
-TRIBITS_ADD_EXECUTABLE(
-  global_2_local_ids
-  SOURCES ${SOURCES}
-  COMM serial mpi
-  )
+Kokkos_ADD_EXAMPLE_EXECUTABLE(global_2_local_ids "${SOURCES}")
 
 

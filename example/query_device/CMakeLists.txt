@@ -6,9 +6,5 @@ SET(SOURCES "")
 
 FILE(GLOB SOURCES *.cpp)
 
-TRIBITS_ADD_EXECUTABLE(
-  query_device
-  SOURCES ${SOURCES}
-  COMM serial mpi
-  )
+Kokkos_ADD_EXAMPLE_EXECUTABLE(query_device "${SOURCES}")
 

@@ -5,7 +5,7 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../src )
 
 IF(NOT KOKKOS_HAS_TRILINOS)
   IF(KOKKOS_SEPARATE_LIBS)
-    set(TEST_LINK_TARGETS kokkoscore)
+    set(TEST_LINK_TARGETS kokkoscore kokkoscontainers)
   ELSE()
     set(TEST_LINK_TARGETS kokkos)
   ENDIF()

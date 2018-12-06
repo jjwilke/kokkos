@@ -528,6 +528,9 @@ view_wrap( Args const & ... args )
 
 namespace Kokkos {
 
+template <int I>
+struct CompilePrintRank;
+
 template< class DataType , class ... Properties >
 class View ;
 

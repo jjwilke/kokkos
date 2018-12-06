@@ -10,9 +10,7 @@ FILE(GLOB SOURCES *.cpp)
 
 LIST( APPEND SOURCES ../fixture/BoxElemPart.cpp)
 
-TRIBITS_ADD_EXECUTABLE(
-  feint
-  SOURCES ${SOURCES}
-  COMM serial mpi
-  )
+# Must be quoted to propagate list
+Kokkos_ADD_EXAMPLE_EXECUTABLE(feint "${SOURCES}")
+
 

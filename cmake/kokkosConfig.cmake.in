@@ -1,0 +1,23 @@
+@PACKAGE_INIT@ 
+
+# Compute paths
+GET_FILENAME_COMPONENT(Kokkos_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+SET(Kokkos_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
+
+include(CMakeFindDependencyMacro)
+
+
+# These are IMPORTED targets created by KokkosTargets.cmake
+SET(Kokkos_LIBRARY_DIRS @INSTALL_LIB_DIR@)
+SET(Kokkos_LIBRARIES @Kokkos_LIBRARIES_NAMES@)
+SET(Kokkos_TPL_LIBRARIES @KOKKOS_LIBS@)
+SET(Kokkos_SEPARATE_LIBS @KOKKOS_SEPARATE_LIBS@)
+
+if (Kokkos_SEPARATE_LIBS)
+INCLUDE("${Kokkos_CMAKE_DIR}/KokkosCoreTargets.cmake")
+INCLUDE("${Kokkos_CMAKE_DIR}/KokkosContainersTargets.cmake")
+INCLUDE("${Kokkos_CMAKE_DIR}/KokkosAlgorithmsTargets.cmake")
+else()
+INCLUDE("${Kokkos_CMAKE_DIR}/KokkosTargets.cmake")
+endif()
+

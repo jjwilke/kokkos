@@ -97,7 +97,8 @@ void test_host_explicit( comm::Machine machine ,
                          size_t count_run )
 {
   Kokkos::HostSpace::execution_space::initialize( gang_count * gang_worker_count );
-  Explicit::driver<double,Kokkos::HostSpace::execution_space>( "Threads" , machine , gang_count , elem_count_begin , elem_count_end , count_run );
+  Explicit::driver<double,Kokkos::HostSpace::execution_space>(
+        "Threads" , machine , gang_count , elem_count_begin , elem_count_end , count_run );
   Kokkos::HostSpace::execution_space::finalize();
 }
 

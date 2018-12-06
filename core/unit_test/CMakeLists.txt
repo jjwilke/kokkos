@@ -4,7 +4,7 @@
 
 IF(NOT KOKKOS_HAS_TRILINOS)
   IF(KOKKOS_SEPARATE_LIBS)
-    set(TEST_LINK_TARGETS kokkoscore)
+    set(TEST_LINK_TARGETS kokkoscore kokkoscontainers)
   ELSE()
     set(TEST_LINK_TARGETS kokkos)
   ENDIF()
@@ -419,6 +419,8 @@ TRIBITS_ADD_EXECUTABLE( push_finalize_hook_terminate
   TESTONLYLIBS kokkos_gtest ${TEST_LINK_TARGETS}
 )
 
+IF(KOKKOS_HAS_TRILINOS)
+#tribits wrapped does not have add_advanced_test and it looks painful to add
 TRIBITS_ADD_ADVANCED_TEST( UnitTest_PushFinalizeHook_terminate
   TEST_0
     EXEC push_finalize_hook_terminate
@@ -427,6 +429,7 @@ TRIBITS_ADD_ADVANCED_TEST( UnitTest_PushFinalizeHook_terminate
       "PASSED: I am the custom std::terminate handler."
     ALWAYS_FAIL_ON_ZERO_RETURN
 )
+ENDIF()
 
 foreach(INITTESTS_NUM RANGE 1 16)
 TRIBITS_ADD_EXECUTABLE_AND_TEST(

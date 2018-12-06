@@ -4,7 +4,7 @@ INCLUDE_DIRECTORIES(REQUIRED_DURING_INSTALLATION_TESTING ${CMAKE_CURRENT_SOURCE_
 
 IF(NOT KOKKOS_HAS_TRILINOS)
   IF(KOKKOS_SEPARATE_LIBS)
-    set(TEST_LINK_TARGETS kokkoscore)
+    set(TEST_LINK_TARGETS kokkoscore kokkoscontainers)
   ELSE()
     set(TEST_LINK_TARGETS kokkos)
   ENDIF()
@@ -14,6 +14,8 @@ ENDIF()
 # ../../algorithms/src/Kokkos_Random.hpp
 # we'll just allow it to be included, but note
 # that in TriBITS KokkosAlgorithms can be disabled...
+# DEPRECATED: This should be removed and use transitive deps
+# via target_include_dirs whenever Trilinos decides CMake 2.8 is ridiculous
 INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/../../algorithms/src")
 
 SET(SOURCES
@@ -47,6 +49,7 @@ TRIBITS_ADD_EXECUTABLE(
   PerformanceTest_TaskDAG
   SOURCES test_taskdag.cpp
   COMM serial mpi
+  TESTONLYLIBS ${TEST_LINK_TARGETS}
   )
 
 TRIBITS_ADD_TEST(

@@ -6,11 +6,5 @@ SET(SOURCES "")
 
 FILE(GLOB SOURCES *.cpp)
 
-SET(LIBRARIES kokkoscore)
-
-TRIBITS_ADD_EXECUTABLE(
-  multi_fem
-  SOURCES ${SOURCES}
-  COMM serial mpi
-  )
+Kokkos_ADD_EXAMPLE_EXECUTABLE(multi_fem "${SOURCES}")
 

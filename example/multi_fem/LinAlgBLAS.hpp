@@ -55,30 +55,30 @@
 namespace Kokkos {
 namespace Impl {
 
-template< class Scalar , class Layout , class DeviceType > struct Dot ;
+template< class Scalar , class... Properties> struct Dot ;
 
-template< class Scalar , class Layout , class DeviceType > struct Dot1 ;
+template< class Scalar , class... Properties> struct Dot1 ;
 
 template< typename ScalarA ,
           typename ScalarY ,
-          class Layout , class Device >
+          class... Properties>
 struct Scale ;
 
 template< typename ScalarA ,
           typename ScalarY ,
-          class Layout , class Device >
+          class... Properties>
 struct Fill ;
 
 template< typename ScalarA ,
           typename ScalarX ,
           typename ScalarY ,
-          class Layout , class Device >
+          class... Properties>
 struct AXPY ;
 
 template< typename ScalarX ,
           typename ScalarB ,
           typename ScalarY ,
-          class Layout , class Device >
+          class... Properties>
 struct XPBY ;
 
 template< typename ScalarA ,
@@ -86,7 +86,7 @@ template< typename ScalarA ,
           typename ScalarB ,
           typename ScalarY ,
           typename ScalarW ,
-          class Layout , class Device >
+          class... Properties>
 struct WAXPBY ;
 
 }
@@ -103,19 +103,18 @@ namespace Kokkos {
 
 template< typename ScalarX /* Allow mix of const and non-const */ ,
           typename ScalarY /* Allow mix of const and non-const */ ,
-          class L , class D ,
-          class MX /* Allow any management type */ ,
-          class MY /* Allow any management type */ >
+          class... Properties
+        >
 inline
 double dot( const size_t n ,
-            const View< ScalarX * , L , D , MX > & x ,
-            const View< ScalarY * , L , D , MY > & y ,
+            const View< ScalarX * , Properties...> & x ,
+            const View< ScalarY * , Properties...> & y ,
             comm::Machine machine )
 {
   double global_result = 0 ;
   double local_result = 0 ;
 
-  Impl::Dot< ScalarX , L , D >( n , x , y , local_result );
+  Impl::Dot< ScalarX , Properties...>( n , x , y , local_result );
 
   MPI_Allreduce( & local_result , & global_result , 1 ,
                  MPI_DOUBLE , MPI_SUM , machine.mpi_comm );
@@ -127,18 +126,17 @@ double dot( const size_t n ,
 
 template< typename ScalarX /* Allow mix of const and non-const */ ,
           typename ScalarY /* Allow mix of const and non-const */ ,
-          class L , class D ,
-          class MX /* Allow any management type */ ,
-          class MY /* Allow any management type */ >
+          class... Properties
+         >
 inline
 double dot( const size_t n ,
-            const View< ScalarX * , L , D , MX > & x ,
-            const View< ScalarY * , L , D , MY > & y ,
+            const View< ScalarX * , Properties...> & x ,
+            const View< ScalarY * , Properties...> & y ,
             comm::Machine )
 {
   double global_result = 0 ;
 
-  Impl::Dot< ScalarX , L , D >( n , x , y , global_result );
+  Impl::Dot< ScalarX , Properties...>( n , x , y , global_result );
 
   return global_result ;
 }
@@ -150,8 +148,8 @@ double dot( const size_t n ,
 #if defined( KOKKOS_ENABLE_MPI )
 
 template< typename ScalarX /* Allow mix of const and non-const */ ,
-          class L , class D ,
-          class MX /* Allow any management type */ >
+          class... Properties
+         >
 inline
 double dot( const size_t n ,
             const View< ScalarX * , L , D , MX > & x ,
@@ -171,16 +169,15 @@ double dot( const size_t n ,
 #else
 
 template< typename ScalarX /* Allow mix of const and non-const */ ,
-          class L , class D ,
-          class MX /* Allow any management type */ >
+          class... Properties>
 inline
 double dot( const size_t n ,
-            const View< ScalarX * , L , D , MX > & x ,
+            const View< ScalarX * , Properties...> & x ,
             comm::Machine )
 {
   double global_result = 0 ;
 
-  Impl::Dot1< ScalarX , L , D >( n , x , global_result );
+  Impl::Dot1< ScalarX , Properties...>( n , x , global_result );
 
   return global_result ;
 }
@@ -190,11 +187,10 @@ double dot( const size_t n ,
 //----------------------------------------------------------------------------
 
 template< typename ScalarX /* Allow mix of const and non-const */ ,
-          class L , class D ,
-          class MX /* Allow any management type */ >
+          class... Properties>
 inline
 double norm2( const size_t n ,
-              const View< ScalarX * , L , D , MX > & x ,
+              const View< ScalarX * , Properties...> & x ,
               comm::Machine machine )
 {
   return std::sqrt( dot( n , x , machine ) );
@@ -204,26 +200,24 @@ double norm2( const size_t n ,
 
 template< typename ScalarA ,
           typename ScalarX ,
-          class L ,
-          class D ,
-          class MX >
+          class... Properties
+        >
 void scale( const size_t n ,
             const ScalarA & alpha ,
-            const View< ScalarX * , L , D , MX > & x )
+            const View< ScalarX * , Properties... > & x )
 {
-  Impl::Scale< ScalarA , ScalarX , L , D >( n , alpha , x );
+  Impl::Scale< ScalarA , ScalarX , Properties... >( n , alpha , x );
 }
 
 template< typename ScalarA ,
           typename ScalarX ,
-          class L ,
-          class D ,
-          class MX >
+          class... Properties
+          >
 void fill( const size_t n ,
            const ScalarA & alpha ,
-           const View< ScalarX * , L , D , MX > & x )
+           const View< ScalarX * , Properties...> & x )
 {
-  Impl::Fill< ScalarA , ScalarX , L , D >( n , alpha , x );
+  Impl::Fill< ScalarA , ScalarX , Properties...>( n , alpha , x );
 }
 
 //----------------------------------------------------------------------------
@@ -231,16 +225,14 @@ void fill( const size_t n ,
 template< typename ScalarA ,
           typename ScalarX ,
           typename ScalarY ,
-          class L ,
-          class D ,
-          class MX ,
-          class MY >
+          class... Properties
+        >
 void axpy( const size_t n ,
            const ScalarA & alpha ,
-           const View< ScalarX *, L , D , MX > & x ,
-           const View< ScalarY *, L , D , MY > & y )
+           const View< ScalarX *, Properties...> & x ,
+           const View< ScalarY *, Properties...> & y )
 {
-  Impl::AXPY< ScalarA, ScalarX, ScalarY , L , D >( n, alpha, x, y );
+  Impl::AXPY< ScalarA, ScalarX, ScalarY , Properties...>( n, alpha, x, y );
 }
 
 //----------------------------------------------------------------------------
@@ -248,16 +240,14 @@ void axpy( const size_t n ,
 template< typename ScalarX ,
           typename ScalarB ,
           typename ScalarY ,
-          class L ,
-          class D ,
-          class MX ,
-          class MY >
+          class... Properties
+        >
 void xpby( const size_t n ,
-           const View< ScalarX *, L , D , MX > & x ,
+           const View< ScalarX *, Properties...> & x ,
            const ScalarB & beta ,
-           const View< ScalarY *, L , D , MY > & y )
+           const View< ScalarY *, Properties...> & y )
 {
-  Impl::XPBY< ScalarX, ScalarB, ScalarY , L , D >( n, x, beta, y );
+  Impl::XPBY< ScalarX, ScalarB, ScalarY , Properties... >( n, x, beta, y );
 }
 
 //----------------------------------------------------------------------------
@@ -268,16 +258,15 @@ template< typename ScalarA ,
           typename ScalarB ,
           typename ScalarY ,
           typename ScalarW ,
-          class L , class D ,
-          class MX , class MY , class MW >
+          class... Properties>
 void waxpby( const size_t n ,
              const ScalarA & alpha ,
-             const View< ScalarX * , L , D , MX > & x ,
+             const View< ScalarX * , Properties...> & x ,
              const ScalarB & beta ,
-             const View< ScalarY * , L , D , MY > & y ,
-             const View< ScalarW * , L , D , MW > & w )
+             const View< ScalarY * , Properties...> & y ,
+             const View< ScalarW * , Properties...> & w )
 {
-  Impl::WAXPBY<ScalarA,ScalarX,ScalarB,ScalarY,ScalarW,L,D>
+  Impl::WAXPBY<ScalarA,ScalarX,ScalarB,ScalarY,ScalarW,Properties...>
     ( n , alpha , x , beta , y , w );
 }
 
@@ -289,12 +278,12 @@ void waxpby( const size_t n ,
 namespace Kokkos {
 namespace Impl {
 
-template< typename Scalar , class L , class D >
+template< typename Scalar , class... Properties>
 struct Dot
 {
 private:
 
-  typedef View< const Scalar*, L, D, MemoryUnmanaged >  vector_const_type ;
+  typedef View< const Scalar*, Properties...>  vector_const_type ;
 
   const vector_const_type x ;
   const vector_const_type y ;
@@ -329,12 +318,12 @@ public:
 
 //----------------------------------------------------------------------------
 
-template< typename Scalar , class L , class D >
+template< typename Scalar , class... Properties>
 struct Dot1
 {
 private:
 
-  typedef View< const Scalar*, L, D , MemoryUnmanaged >  vector_const_type ;
+  typedef View< const Scalar*, Properties...>  vector_const_type ;
 
   const vector_const_type x ;
 
@@ -374,14 +363,15 @@ template < typename ScalarA ,
            typename ScalarB ,
            typename ScalarY ,
            typename ScalarW ,
-           class L , class D >
+           class... Properties
+         >
 struct WAXPBY
 {
 private:
 
-  typedef View<       ScalarW *, L , D , MemoryUnmanaged > ViewW ;
-  typedef View< const ScalarX *, L , D , MemoryUnmanaged > ViewX ;
-  typedef View< const ScalarY *, L , D , MemoryUnmanaged > ViewY ;
+  typedef View<       ScalarW *, Properties...> ViewW ;
+  typedef View< const ScalarX *, Properties...> ViewX ;
+  typedef View< const ScalarY *, Properties...> ViewY ;
 
   const ViewW    w ;
   const ViewX    x ;
@@ -419,12 +409,12 @@ public:
 
 template < typename ScalarB ,
            typename ScalarW ,
-           class L , class D >
+           class... Properties>
 struct Scale
 {
 private:
 
-  typedef View< ScalarW *, L , D , MemoryUnmanaged >  ViewW ;
+  typedef View< ScalarW *, Properties...>  ViewW ;
   const ViewW    w ;
   const ScalarB  beta ;
 
@@ -449,12 +439,13 @@ public:
 
 template < typename ScalarB ,
            typename ScalarW ,
-           class L , class D >
+           class... Properties
+         >
 struct Fill
 {
 private:
 
-  typedef View< ScalarW *, L , D , MemoryUnmanaged >  ViewW ;
+  using ViewW = View< ScalarW *, Properties...>;
   const ViewW    w ;
   const ScalarB  beta ;
 
@@ -482,13 +473,13 @@ public:
 template < typename ScalarA ,
            typename ScalarX ,
            typename ScalarW ,
-           class L , class D >
+           class... Properties>
 struct AXPY
 {
 private:
 
-  typedef View<       ScalarW *, L , D , MemoryUnmanaged >  ViewW ;
-  typedef View< const ScalarX *, L , D , MemoryUnmanaged >  ViewX ;
+  typedef View<       ScalarW *, Properties...>  ViewW ;
+  typedef View< const ScalarX *, Properties...>  ViewX ;
 
   const ViewW    w ;
   const ViewX    x ;
@@ -519,13 +510,13 @@ public:
 template< typename ScalarX ,
           typename ScalarB ,
           typename ScalarW ,
-          class L , class D >
+          class... Properties>
 struct XPBY
 {
 private:
 
-  typedef View<       ScalarW *, L , D , MemoryUnmanaged >  ViewW ;
-  typedef View< const ScalarX *, L , D , MemoryUnmanaged >  ViewX ;
+  typedef View<       ScalarW *, Properties...>  ViewW ;
+  typedef View< const ScalarX *, Properties...>  ViewX ;
 
   const ViewW    w ;
   const ViewX    x ;

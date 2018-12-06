@@ -12,6 +12,9 @@ IF(NOT KOKKOS_HAS_TRILINOS)
   # Define Project Name if this is a standalone build
   IF(NOT DEFINED ${PROJECT_NAME})
     project(Kokkos CXX)
+    set (Kokkos_VERSION_MAJOR 2)
+    set (Kokkos_VERSION_MINOR 7)
+    set (Kokkos_VERSION_PATCH 4)
   ENDIF()
 
   # Basic initialization (Used in KOKKOS_SETTINGS)
@@ -66,6 +69,7 @@ IF(NOT KOKKOS_HAS_TRILINOS)
   ADD_SUBDIRECTORY(core)
   ADD_SUBDIRECTORY(containers)
   ADD_SUBDIRECTORY(algorithms)
+  ADD_SUBDIRECTORY(example)
 
 ELSE()
 #------------------------------------------------------------------------------
