@@ -1,0 +1,52 @@
+@PACKAGE_INIT@ 
+
+# Compute paths
+GET_FILENAME_COMPONENT(Kokkos_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+SET(Kokkos_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
+
+include(CMakeFindDependencyMacro)
+
+
+# These are IMPORTED targets created by KokkosTargets.cmake
+SET(Kokkos_LIBRARY_DIRS @INSTALL_LIB_DIR@)
+SET(Kokkos_LIBRARIES @Kokkos_LIBRARIES_NAMES@)
+SET(Kokkos_TPL_LIBRARIES @KOKKOS_LIBS@)
+SET(Kokkos_SEPARATE_LIBS @KOKKOS_SEPARATE_LIBS@)
+SET(Kokkos_TARGETS_INSTALL_DIR @KOKKOS_TARGETS_INSTALL_DIR@)
+
+SET(Kokkos_ENABLE_Cuda   @Kokkos_ENABLE_Cuda@)
+SET(Kokkos_ENABLE_OpenMP  @Kokkos_ENABLE_OpenMP@)
+SET(Kokkos_ENABLE_Pthread @Kokkos_ENABLE_Pthread@) 
+SET(Kokkos_ENABLE_Serial  @Kokkos_ENABLE_Serial@)
+
+INCLUDE("${Kokkos_CMAKE_DIR}/KokkosTargets.cmake")
+INCLUDE("${Kokkos_CMAKE_DIR}/KokkosDeprecatedTargets.cmake")
+
+
+#we only need to worry about minor version comparison
+#we will have already failed if the major versions mismatch
+if (${Kokkos_FIND_VERSION_MINOR})
+
+if (${Kokkos_FIND_VERSION_MINOR} LESS ${Kokkos_VERSION_MINOR})
+# Set the target properties necessary to ensure backwards
+# or deprecated compatibility
+if (${Kokkos_SEPARATE_LIBS})
+#Only need to set kokkoscore, flags should propagate to other targets
+set_property(TARGET kokkos::kokkoscore APPEND PROPERTY
+  INTERFACE_COMPILE_DEFINITIONS "KOKKOS_ENABLE_DEPRECATED_CODE"
+)
+set_property(TARGET kokkoscore APPEND PROPERTY
+  INTERFACE_COMPILE_DEFINITIONS "KOKKOS_ENABLE_DEPRECATED_CODE"
+)
+else()
+set_property(TARGET kokkos::kokkos APPEND PROPERTY
+  INTERFACE_COMPILE_DEFINITIONS "KOKKOS_ENABLE_DEPRECATED_CODE"
+)
+set_property(TARGET kokkos APPEND PROPERTY
+  INTERFACE_COMPILE_DEFINITIONS "KOKKOS_ENABLE_DEPRECATED_CODE"
+)
+endif()
+endif()
+
+endif()
+
