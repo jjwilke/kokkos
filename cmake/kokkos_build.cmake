@@ -1,16 +1,3 @@
-############################ Detect if submodule ###############################
-#
-# With thanks to StackOverflow:  
-#      http://stackoverflow.com/questions/25199677/how-to-detect-if-current-scope-has-a-parent-in-cmake
-#
-get_directory_property(HAS_PARENT PARENT_DIRECTORY)
-if(HAS_PARENT)
-  message(STATUS "Submodule build")
-  SET(KOKKOS_HEADER_DIR "include/kokkos")
-else()
-  message(STATUS "Standalone build")
-  SET(KOKKOS_HEADER_DIR "include")
-endif()
 
 ################################ Handle the actual build #######################
 
@@ -138,9 +125,9 @@ IF(KOKKOS_SEPARATE_LIBS)
   #however, we want to preserve backward compatibility
   #thus we do with/without namespace to both 
   #standard and kokkos-specific install locations
-  install(TARGETS kokkoscore kokkoscontainers kokkosalgorithms
+  install(TARGETS kokkoscore kokkoscontainers kokkosalgorithms kokkos_gtest
           EXPORT kokkos
-          INCLUDES DESTINATION include
+          INCLUDES DESTINATION ${KOKKOS_HEADER_DIR}
           ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
           LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
           RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
@@ -160,7 +147,7 @@ IF(KOKKOS_SEPARATE_LIBS)
           FILE KokkosDeprecatedTargets.cmake
           DESTINATION ${STD_INSTALL_CMAKE_DIR})
 
-  export(TARGETS kokkoscore kokkosalgorithms kokkoscontainers
+  export(TARGETS kokkoscore kokkosalgorithms kokkoscontainers kokkos_gtest
          NAMESPACE kokkos::
          FILE KokkosTargets.cmake)
 
@@ -213,8 +200,8 @@ ELSE()
 
   target_link_libraries(kokkos PUBLIC "${KOKKOS_LINK_FLAGS}")
 
-  install(TARGETS kokkos EXPORT kokkos
-          INCLUDES DESTINATION include
+  install(TARGETS kokkos kokkos_gtest EXPORT kokkos
+          INCLUDES DESTINATION ${KOKKOS_HEADER_DIR}
           ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
           LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
           RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
@@ -224,22 +211,22 @@ ELSE()
   #however, we want to preserve backward compatibility
   #thus we do with/without namespace to both 
   #standard and kokkos-specific install locations
-  install(EXPORT kokkos
+  install(EXPORT kokkos 
           FILE KokkosTargets.cmake
           NAMESPACE kokkos::
           DESTINATION ${INSTALL_CMAKE_DIR})
-  install(EXPORT kokkos
+  install(EXPORT kokkos 
           FILE KokkosTargets.cmake
           NAMESPACE kokkos::
           DESTINATION ${STD_INSTALL_CMAKE_DIR})
-  install(EXPORT kokkos
+  install(EXPORT kokkos 
           FILE KokkosDeprecatedTargets.cmake
           DESTINATION ${INSTALL_CMAKE_DIR})
-  install(EXPORT kokkos
+  install(EXPORT kokkos 
           FILE KokkosDeprecatedTargets.cmake
           DESTINATION ${STD_INSTALL_CMAKE_DIR})
 
-  export(TARGETS kokkos
+  export(TARGETS kokkos kokkos_gtest
          NAMESPACE kokkos::
          FILE KokkosTargets.cmake)
 

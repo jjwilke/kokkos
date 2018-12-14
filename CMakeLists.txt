@@ -1,10 +1,24 @@
 # Is this a build as part of Trilinos?
-
 IF(COMMAND TRIBITS_PACKAGE_DECL)
   SET(KOKKOS_HAS_TRILINOS ON CACHE BOOL "")
 ELSE()
   SET(KOKKOS_HAS_TRILINOS OFF CACHE BOOL "")
 ENDIF()
+
+############################ Detect if submodule ###############################
+#
+# With thanks to StackOverflow:  
+#      http://stackoverflow.com/questions/25199677/how-to-detect-if-current-scope-has-a-parent-in-cmake
+#
+get_directory_property(HAS_PARENT PARENT_DIRECTORY)
+if(HAS_PARENT)
+  message(STATUS "Submodule build")
+  SET(KOKKOS_HEADER_DIR "include/kokkos")
+else()
+  message(STATUS "Standalone build")
+  SET(KOKKOS_HEADER_DIR "include")
+endif()
+
 
 IF(NOT KOKKOS_HAS_TRILINOS)
   cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
@@ -57,12 +71,15 @@ IF(NOT KOKKOS_HAS_TRILINOS)
   list(REMOVE_ITEM KOKKOS_TPL_LIBRARY_NAMES "")
   set_kokkos_srcs(KOKKOS_SRC ${KOKKOS_SRC})
 
+  #------------ Add in Fake Tribits Handling to allow unit test builds- --------
+  include(${KOKKOS_SRC_PATH}/cmake/tribits.cmake)
+
+  #------------ Build and export a GTest library for Kokkos-dependent libs to use
+  include(${KOKKOS_SRC_PATH}/cmake/kokkos_gtest.cmake)
+
   #------------ NOW BUILD ------------------------------------------------------
   include(${KOKKOS_SRC_PATH}/cmake/kokkos_build.cmake)
 
-  #------------ Add in Fake Tribits Handling to allow unit test builds- --------
-
-  include(${KOKKOS_SRC_PATH}/cmake/tribits.cmake)
 
   TRIBITS_PACKAGE_DECL(Kokkos)
 
@@ -71,7 +88,9 @@ IF(NOT KOKKOS_HAS_TRILINOS)
   ADD_SUBDIRECTORY(algorithms)
   ADD_SUBDIRECTORY(example)
 
-ELSE()
+ELSE() #This IS a Trilinos build
+include(${KOKKOS_SRC_PATH}/cmake/kokkos_gtest.cmake)
+
 #------------------------------------------------------------------------------
 #
 # A) Forward declare the package so that certain options are also defined for

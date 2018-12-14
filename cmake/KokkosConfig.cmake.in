@@ -18,6 +18,7 @@ SET(Kokkos_ENABLE_Cuda   @Kokkos_ENABLE_Cuda@)
 SET(Kokkos_ENABLE_OpenMP  @Kokkos_ENABLE_OpenMP@)
 SET(Kokkos_ENABLE_Pthread @Kokkos_ENABLE_Pthread@) 
 SET(Kokkos_ENABLE_Serial  @Kokkos_ENABLE_Serial@)
+SET(Kokkos_ENABLE_DEBUG @KOKKOS_ENABLE_DEBUG@)
 
 INCLUDE("${Kokkos_CMAKE_DIR}/KokkosTargets.cmake")
 INCLUDE("${Kokkos_CMAKE_DIR}/KokkosDeprecatedTargets.cmake")
