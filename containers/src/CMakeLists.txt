@@ -1,12 +1,15 @@
 
 TRIBITS_CONFIGURE_FILE(${PACKAGE_NAME}_config.h)
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-
 #-----------------------------------------------------------------------------
 
 SET(TRILINOS_INCDIR ${CMAKE_INSTALL_PREFIX}/${${PROJECT_NAME}_INSTALL_INCLUDE_DIR})
+
+KOKKOS_SET_TRIBITS_INCLUDES(
+ CONTAINERS_INCLDES
+ ${CMAKE_CURRENT_BINARY_DIR}
+ ${CMAKE_CURRENT_SOURCE_DIR}
+)
 
 if(KOKKOS_LEGACY_TRIBITS)
 
@@ -44,4 +47,9 @@ else()
       )
 
 endif()
+
+KOKKOS_TARGET_INCLUDES(kokkoscontainers ${CONTAINERS_INCLUDES})
+
+
 #-----------------------------------------------------------------------------
+

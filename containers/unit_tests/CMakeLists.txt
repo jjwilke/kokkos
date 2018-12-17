@@ -1,21 +1,13 @@
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
-INCLUDE_DIRECTORIES(REQUIRED_DURING_INSTALLATION_TESTING ${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../src )
+#INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
+#INCLUDE_DIRECTORIES(REQUIRED_DURING_INSTALLATION_TESTING ${CMAKE_CURRENT_SOURCE_DIR})
+#INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../src )
 
-IF(NOT KOKKOS_HAS_TRILINOS)
-  IF(KOKKOS_SEPARATE_LIBS)
-    set(TEST_LINK_TARGETS kokkoscore kokkoscontainers)
-  ELSE()
-    set(TEST_LINK_TARGETS kokkos)
-  ENDIF()
-ENDIF()
 
 IF(Kokkos_ENABLE_Pthread)
-TRIBITS_ADD_EXECUTABLE_AND_TEST(
+KOKKOS_ADD_TEST(
   UnitTest_Threads
   SOURCES
-    UnitTestMain.cpp
     threads/TestThreads_BitSet.cpp
     threads/TestThreads_DualView.cpp
     threads/TestThreads_DynamicView.cpp
@@ -29,18 +21,13 @@ TRIBITS_ADD_EXECUTABLE_AND_TEST(
     threads/TestThreads_UnorderedMap.cpp
     threads/TestThreads_Vector.cpp
     threads/TestThreads_ViewCtorPropEmbeddedDim.cpp
-  COMM serial mpi
-  NUM_MPI_PROCS 1
-  FAIL_REGULAR_EXPRESSION "  FAILED  "
-  TESTONLYLIBS kokkos_gtest ${TEST_LINK_TARGETS}
-  )
+)
 ENDIF()
 
 IF(Kokkos_ENABLE_Serial)
-TRIBITS_ADD_EXECUTABLE_AND_TEST(
+KOKKOS_ADD_TEST(
   UnitTest_Serial
   SOURCES
-    UnitTestMain.cpp
     serial/TestSerial_BitSet.cpp
     serial/TestSerial_DualView.cpp
     serial/TestSerial_DynamicView.cpp
@@ -54,18 +41,13 @@ TRIBITS_ADD_EXECUTABLE_AND_TEST(
     serial/TestSerial_UnorderedMap.cpp
     serial/TestSerial_Vector.cpp
     serial/TestSerial_ViewCtorPropEmbeddedDim.cpp
-  COMM serial mpi
-  NUM_MPI_PROCS 1
-  FAIL_REGULAR_EXPRESSION "  FAILED  "
-  TESTONLYLIBS kokkos_gtest ${TEST_LINK_TARGETS}
   )
 ENDIF()
 
 IF(Kokkos_ENABLE_OpenMP)
-TRIBITS_ADD_EXECUTABLE_AND_TEST(
+KOKKOS_ADD_TEST(
   UnitTest_OpenMP
   SOURCES
-    UnitTestMain.cpp
     openmp/TestOpenMP_BitSet.cpp
     openmp/TestOpenMP_DualView.cpp
     openmp/TestOpenMP_DynamicView.cpp
@@ -79,18 +61,13 @@ TRIBITS_ADD_EXECUTABLE_AND_TEST(
     openmp/TestOpenMP_UnorderedMap.cpp
     openmp/TestOpenMP_Vector.cpp
     openmp/TestOpenMP_ViewCtorPropEmbeddedDim.cpp
-  COMM serial mpi
-  NUM_MPI_PROCS 1
-  FAIL_REGULAR_EXPRESSION "  FAILED  "
-  TESTONLYLIBS kokkos_gtest ${TEST_LINK_TARGETS}
   )
 ENDIF()
 
 IF(Kokkos_ENABLE_Cuda)
-TRIBITS_ADD_EXECUTABLE_AND_TEST(
+KOKKOS_ADD_TEST(
   UnitTest_Cuda
   SOURCES
-    UnitTestMain.cpp
     cuda/TestCuda_BitSet.cpp
     cuda/TestCuda_DualView.cpp
     cuda/TestCuda_DynamicView.cpp
@@ -104,10 +81,6 @@ TRIBITS_ADD_EXECUTABLE_AND_TEST(
     cuda/TestCuda_UnorderedMap.cpp
     cuda/TestCuda_Vector.cpp
     cuda/TestCuda_ViewCtorPropEmbeddedDim.cpp
-  COMM serial mpi
-  NUM_MPI_PROCS 1
-  FAIL_REGULAR_EXPRESSION "  FAILED  "
-  TESTONLYLIBS kokkos_gtest ${TEST_LINK_TARGETS}
   )
 ENDIF()
 

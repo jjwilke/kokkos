@@ -1,9 +1,12 @@
-# Is this a build as part of Trilinos?
+
 IF(COMMAND TRIBITS_PACKAGE_DECL)
   SET(KOKKOS_HAS_TRILINOS ON CACHE BOOL "")
 ELSE()
   SET(KOKKOS_HAS_TRILINOS OFF CACHE BOOL "")
 ENDIF()
+
+
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/kokkos_wrappers.cmake)
 
 ############################ Detect if submodule ###############################
 #
@@ -22,6 +25,12 @@ endif()
 
 IF(NOT KOKKOS_HAS_TRILINOS)
   cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
+
+  IF(KOKKOS_SEPARATE_LIBS)
+    set(TEST_LINK_TARGETS kokkoscore kokkoscontainers)
+  ELSE()
+    set(TEST_LINK_TARGETS kokkos)
+  ENDIF()
 
   # Define Project Name if this is a standalone build
   IF(NOT DEFINED ${PROJECT_NAME})
@@ -74,10 +83,9 @@ IF(NOT KOKKOS_HAS_TRILINOS)
   #------------ Add in Fake Tribits Handling to allow unit test builds- --------
   include(${KOKKOS_SRC_PATH}/cmake/tribits.cmake)
 
-  #------------ Build and export a GTest library for Kokkos-dependent libs to use
-  include(${KOKKOS_SRC_PATH}/cmake/kokkos_gtest.cmake)
 
   #------------ NOW BUILD ------------------------------------------------------
+  ADD_SUBDIRECTORY(tpls/gtest)
   include(${KOKKOS_SRC_PATH}/cmake/kokkos_build.cmake)
 
 
@@ -89,7 +97,9 @@ IF(NOT KOKKOS_HAS_TRILINOS)
   ADD_SUBDIRECTORY(example)
 
 ELSE() #This IS a Trilinos build
-include(${KOKKOS_SRC_PATH}/cmake/kokkos_gtest.cmake)
+
+set(TEST_LINK_TARGETS kokkoscore)
+
 
 #------------------------------------------------------------------------------
 #
@@ -98,7 +108,6 @@ include(${KOKKOS_SRC_PATH}/cmake/kokkos_gtest.cmake)
 #
 
 TRIBITS_PACKAGE_DECL(Kokkos) # ENABLE_SHADOWING_WARNINGS)
-
 
 #------------------------------------------------------------------------------
 #
@@ -147,7 +156,6 @@ INSTALL(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/bin/nvcc_wrapper DESTINATION bin)
 
 TRIBITS_PROCESS_SUBPACKAGES()
 
-
 #------------------------------------------------------------------------------
 #
 # E) If Kokkos itself is enabled, process the Kokkos package
@@ -158,5 +166,6 @@ TRIBITS_PACKAGE_DEF()
 TRIBITS_EXCLUDE_AUTOTOOLS_FILES()
 
 TRIBITS_PACKAGE_POSTPROCESS()
+
 
 ENDIF()

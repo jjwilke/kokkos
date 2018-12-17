@@ -1,30 +1,8 @@
-#
-# Add test-only library for gtest to be reused by all the subpackages
-#
-
-IF(NOT KOKKOS_HAS_TRILINOS)
-  IF(KOKKOS_SEPARATE_LIBS)
-    set(TEST_LINK_TARGETS kokkoscore kokkoscontainers)
-  ELSE()
-    set(TEST_LINK_TARGETS kokkos)
-  ENDIF()
-ENDIF()
-
-
-
-
-#
-# Define the tests
-#
-
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
-INCLUDE_DIRECTORIES(REQUIRED_DURING_INSTALLATION_TESTING ${CMAKE_CURRENT_SOURCE_DIR})
 
 IF(Kokkos_ENABLE_Serial)
-  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+  KOKKOS_ADD_TEST(
     UnitTest_Serial
     SOURCES
-      UnitTestMainInit.cpp
       serial/TestSerial_AtomicOperations_int.cpp
       serial/TestSerial_AtomicOperations_unsignedint.cpp
       serial/TestSerial_AtomicOperations_longint.cpp
@@ -79,18 +57,13 @@ IF(Kokkos_ENABLE_Serial)
       serial/TestSerial_ViewOfClass.cpp
       serial/TestSerial_Crs.cpp
       serial/TestSerial_WorkGraph.cpp
-    COMM serial mpi
-    NUM_MPI_PROCS 1
-    FAIL_REGULAR_EXPRESSION "  FAILED  "
-    TESTONLYLIBS kokkos_gtest ${TEST_LINK_TARGETS}
   )
 ENDIF()
 
 IF(Kokkos_ENABLE_Pthread)
-  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+  KOKKOS_ADD_TEST(
     UnitTest_Threads
     SOURCES
-      UnitTestMainInit.cpp
       threads/TestThreads_AtomicOperations_int.cpp
       threads/TestThreads_AtomicOperations_unsignedint.cpp
       threads/TestThreads_AtomicOperations_longint.cpp
@@ -145,18 +118,13 @@ IF(Kokkos_ENABLE_Pthread)
       threads/TestThreads_ViewOfClass.cpp
       threads/TestThreads_Crs.cpp
       threads/TestThreads_WorkGraph.cpp
-    COMM serial mpi
-    NUM_MPI_PROCS 1
-    FAIL_REGULAR_EXPRESSION "  FAILED  "
-    TESTONLYLIBS kokkos_gtest ${TEST_LINK_TARGETS}
   )
 ENDIF()
 
 IF(Kokkos_ENABLE_OpenMP)
-  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+  KOKKOS_ADD_TEST(
     UnitTest_OpenMP
     SOURCES
-      UnitTestMainInit.cpp
       openmp/TestOpenMP_AtomicOperations_int.cpp
       openmp/TestOpenMP_AtomicOperations_unsignedint.cpp
       openmp/TestOpenMP_AtomicOperations_longint.cpp
@@ -212,28 +180,17 @@ IF(Kokkos_ENABLE_OpenMP)
       openmp/TestOpenMP_Crs.cpp
       openmp/TestOpenMP_WorkGraph.cpp
       openmp/TestOpenMP_UniqueToken.cpp
-    COMM serial mpi
-    NUM_MPI_PROCS 1
-    FAIL_REGULAR_EXPRESSION "  FAILED  "
-    TESTONLYLIBS kokkos_gtest ${TEST_LINK_TARGETS}
   )
-  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+  KOKKOS_ADD_TEST(
     UnitTest_OpenMPInterOp
-    SOURCES
-      UnitTestMain.cpp
-      openmp/TestOpenMP_InterOp.cpp
-    COMM serial mpi
-    NUM_MPI_PROCS 1
-    FAIL_REGULAR_EXPRESSION "  FAILED  "
-    TESTONLYLIBS kokkos_gtest ${TEST_LINK_TARGETS}
+    SOURCES openmp/TestOpenMP_InterOp.cpp
   )
 ENDIF()
 
 IF(Kokkos_ENABLE_Qthreads)
-  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+  KOKKOS_ADD_TEST(
     UnitTest_Qthreads
     SOURCES
-      UnitTestMainInit.cpp
       qthreads/TestQthreads_Atomics.cpp
       qthreads/TestQthreads_Complex.cpp
       qthreads/TestQthreads_Other.cpp
@@ -263,18 +220,13 @@ IF(Kokkos_ENABLE_Qthreads)
       qthreads/TestQthreads_ViewAPI_c.cpp
       qthreads/TestQthreads_ViewAPI_d.cpp
       qthreads/TestQthreads_ViewAPI_e.cpp
-    COMM serial mpi
-    NUM_MPI_PROCS 1
-    FAIL_REGULAR_EXPRESSION "  FAILED  "
-    TESTONLYLIBS kokkos_gtest ${TEST_LINK_TARGETS}
   )
 ENDIF()
 
 IF(Kokkos_ENABLE_Cuda)
-  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+  KOKKOS_ADD_TEST(
     UnitTest_Cuda
     SOURCES
-      UnitTestMainInit.cpp
       cuda/TestCudaHostPinned_SharedAlloc.cpp
       cuda/TestCudaHostPinned_ViewCopy.cpp
       cuda/TestCudaHostPinned_ViewAPI_a.cpp
@@ -352,27 +304,16 @@ IF(Kokkos_ENABLE_Cuda)
       cuda/TestCuda_Crs.cpp
       cuda/TestCuda_WorkGraph.cpp
       cuda/TestCuda_UniqueToken.cpp
-    COMM serial mpi
-    NUM_MPI_PROCS 1
-    FAIL_REGULAR_EXPRESSION "  FAILED  "
-    TESTONLYLIBS kokkos_gtest ${TEST_LINK_TARGETS}
   )
-  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+  KOKKOS_ADD_TEST(
     UnitTest_CudaInterOp
-    SOURCES
-      UnitTestMain.cpp
-      cuda/TestCuda_InterOp.cpp
-    COMM serial mpi
-    NUM_MPI_PROCS 1
-    FAIL_REGULAR_EXPRESSION "  FAILED  "
-    TESTONLYLIBS kokkos_gtest ${TEST_LINK_TARGETS}
+    SOURCES cuda/TestCuda_InterOp.cpp
   )
 ENDIF()
 
-TRIBITS_ADD_EXECUTABLE_AND_TEST(
+KOKKOS_ADD_TEST(
   UnitTest_Default
   SOURCES
-    UnitTestMainInit.cpp
     default/TestDefaultDeviceType.cpp
     default/TestDefaultDeviceType_a1.cpp
     default/TestDefaultDeviceType_b1.cpp
@@ -385,20 +326,11 @@ TRIBITS_ADD_EXECUTABLE_AND_TEST(
     default/TestDefaultDeviceType_c3.cpp
     default/TestDefaultDeviceType_d.cpp
     default/TestDefaultDeviceTypeResize.cpp
-  COMM serial mpi
-  NUM_MPI_PROCS 1
-  FAIL_REGULAR_EXPRESSION "  FAILED  "
-    TESTONLYLIBS kokkos_gtest ${TEST_LINK_TARGETS}
 )
 
-TRIBITS_ADD_EXECUTABLE_AND_TEST(
+KOKKOS_ADD_TEST(
   UnitTest_PushFinalizeHook
-  SOURCES
-    UnitTest_PushFinalizeHook.cpp
-  COMM serial mpi
-  NUM_MPI_PROCS 1
-  FAIL_REGULAR_EXPRESSION "FAILED"
-    TESTONLYLIBS kokkos_gtest ${TEST_LINK_TARGETS}
+  SOURCES UnitTest_PushFinalizeHook.cpp
 )
 
 # This test is special, because it passes exactly when it prints the
@@ -408,8 +340,9 @@ TRIBITS_ADD_EXECUTABLE_AND_TEST(
 
 TRIBITS_ADD_EXECUTABLE( push_finalize_hook_terminate
   SOURCES UnitTest_PushFinalizeHook_terminate.cpp
-  TESTONLYLIBS kokkos_gtest ${TEST_LINK_TARGETS}
 )
+TEST_LINK_LIBRARIES(push_finalize_hook_terminate kokkos_gtest)
+TEST_LINK_LIBRARIES(push_finalize_hook_terminate ${TEST_LINK_TARGETS})
 
 IF(KOKKOS_HAS_TRILINOS)
 #tribits wrapped does not have add_advanced_test and it looks painful to add
@@ -424,30 +357,19 @@ TRIBITS_ADD_ADVANCED_TEST( UnitTest_PushFinalizeHook_terminate
 ENDIF()
 
 foreach(INITTESTS_NUM RANGE 1 16)
-TRIBITS_ADD_EXECUTABLE_AND_TEST(
+KOKKOS_ADD_TEST(
   UnitTest_DefaultInit_${INITTESTS_NUM}
-  SOURCES UnitTestMain.cpp default/TestDefaultDeviceTypeInit_${INITTESTS_NUM}.cpp
-  COMM serial mpi
-  NUM_MPI_PROCS 1
-  FAIL_REGULAR_EXPRESSION "  FAILED  "
-    TESTONLYLIBS kokkos_gtest ${TEST_LINK_TARGETS}
+  SOURCES default/TestDefaultDeviceTypeInit_${INITTESTS_NUM}.cpp
 )
 endforeach(INITTESTS_NUM)
 
-TRIBITS_ADD_EXECUTABLE_AND_TEST(
+KOKKOS_ADD_TEST(
   UnitTest_HWLOC
-  SOURCES UnitTestMain.cpp  TestHWLOC.cpp
-  COMM serial mpi
-  NUM_MPI_PROCS 1
-  FAIL_REGULAR_EXPRESSION "  FAILED  "
-    TESTONLYLIBS kokkos_gtest ${TEST_LINK_TARGETS}
+  SOURCES TestHWLOC.cpp
 )
 
-TRIBITS_ADD_EXECUTABLE_AND_TEST(
+KOKKOS_ADD_TEST(
   UnitTest_HostBarrier
-  SOURCES UnitTestMain.cpp  TestHostBarrier.cpp
-  COMM serial mpi
-  NUM_MPI_PROCS 1
-  FAIL_REGULAR_EXPRESSION "  FAILED  "
-    TESTONLYLIBS kokkos_gtest ${TEST_LINK_TARGETS}
+  SOURCES TestHostBarrier.cpp
 )
+

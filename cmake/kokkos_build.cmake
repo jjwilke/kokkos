@@ -40,6 +40,8 @@ else()
 SET(Kokkos_INCLUDE_DIRS_RET ${Kokkos_INCLUDE_DIRS})
 endif()
 
+
+
 IF(KOKKOS_SEPARATE_LIBS)
   # Sources come from makefile-generated kokkos_generated_settings.cmake file
   # Separate libs need to separate the sources
@@ -125,7 +127,7 @@ IF(KOKKOS_SEPARATE_LIBS)
   #however, we want to preserve backward compatibility
   #thus we do with/without namespace to both 
   #standard and kokkos-specific install locations
-  install(TARGETS kokkoscore kokkoscontainers kokkosalgorithms kokkos_gtest
+  install(TARGETS kokkoscore kokkoscontainers kokkosalgorithms 
           EXPORT kokkos
           INCLUDES DESTINATION ${KOKKOS_HEADER_DIR}
           ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
@@ -200,7 +202,8 @@ ELSE()
 
   target_link_libraries(kokkos PUBLIC "${KOKKOS_LINK_FLAGS}")
 
-  install(TARGETS kokkos kokkos_gtest EXPORT kokkos
+  install(TARGETS kokkos 
+          EXPORT kokkos
           INCLUDES DESTINATION ${KOKKOS_HEADER_DIR}
           ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
           LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib

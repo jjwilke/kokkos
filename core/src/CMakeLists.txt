@@ -1,13 +1,16 @@
 
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-
 #-----------------------------------------------------------------------------
 
 SET(TRILINOS_INCDIR ${CMAKE_INSTALL_PREFIX}/${${PROJECT_NAME}_INSTALL_INCLUDE_DIR})
 
 #-----------------------------------------------------------------------------
+
+KOKKOS_SET_TRIBITS_INCLUDES(
+  CORE_INCLUDE_DIRS 
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
 
 IF(KOKKOS_LEGACY_TRIBITS)
 
@@ -16,7 +19,7 @@ IF(KOKKOS_LEGACY_TRIBITS)
   IF(KOKKOS_ENABLE_EXPLICIT_INSTANTIATION)
     MESSAGE("GOING INTO ETI DIR")
     ADD_SUBDIRECTORY(eti)
-    INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/eti")
+    LIST(APPEND ${CORE_INCLUDE_DIRS} "${CMAKE_CURRENT_SOURCE_DIR}/eti")
   ENDIF()
 
   ASSERT_DEFINED(${PROJECT_NAME}_ENABLE_CXX11)
@@ -88,7 +91,7 @@ IF(KOKKOS_LEGACY_TRIBITS)
       NOINSTALLHEADERS ${HEADERS_PRIVATE}
       SOURCES ${SOURCES}
       DEPLIBS
-      )
+    )
 
 #-----------------------------------------------------------------------------
 #  In the new build system, sources are calculated by Makefile.kokkos
@@ -109,6 +112,10 @@ else()
 endif()
 #-----------------------------------------------------------------------------
 
+
+KOKKOS_TARGET_INCLUDES(kokkoscore ${CORE_INCLUDE_DIRS})
+
 # build and install pkgconfig file
 CONFIGURE_FILE(kokkos.pc.in kokkos.pc @ONLY)
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/kokkos.pc DESTINATION lib/pkgconfig)
+

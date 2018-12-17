@@ -4,6 +4,7 @@ TRIBITS_PACKAGE_DEFINE_DEPENDENCIES(
     #
     # New Kokkos subpackages:
     Core                  core              PS       REQUIRED
+    Gtest                 tpls/gtest        PS       REQUIRED
     Containers            containers        PS       OPTIONAL
     Algorithms            algorithms        PS       OPTIONAL
     Example               example           EX       OPTIONAL
