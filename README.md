@@ -1,3 +1,7 @@
+![SST](https://avatars2.githubusercontent.com/u/10199860?s=200&v=4)
+
+# Kokkos: Core Libraries
+
 Kokkos Core implements a programming model in C++ for writing performance portable
 applications targeting all major HPC platforms. For that purpose it provides
 abstractions for both parallel execution of code and data management.
