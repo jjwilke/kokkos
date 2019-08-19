@@ -148,9 +148,9 @@ Full details are given in the [build instructions](BUILD.md). Basic setups are s
 
 ## CMake
 
-The best way to install Kokkos is using the CMake build system. 
+The best way to install Kokkos is using the CMake build system. Assuming Kokkos lives in `$srcdir`: 
 ````
-cmake .. \
+cmake $srcdir \
   -DCMAKE_CXX_COMPILER=$path_to_compiler \
   -DCMAKE_INSTALL_PREFIX=$path_to_install \
   -DKokkos_ENABLE_OpenMP=On \
@@ -158,7 +158,7 @@ cmake .. \
   -DKokkos_ENABLE_HWLOC=On \
   -DKokkos_HWLOC_DIR=$path_to_hwloc
 ````
-then simply type `make install`. The Kokkos CMake package will then be installed in the `$path_to_install` to be used by downstream packages.
+then simply type `make install`. The Kokkos CMake package will then be installed in `$path_to_install` to be used by downstream packages.
 
 To validate the Kokkos build, configure with 
 ````
@@ -166,10 +166,10 @@ To validate the Kokkos build, configure with
 ````
 and run `make test` after completing the build.
 
-There are a few different ways to configure Kokkos shown in the [build instructions](BUILD.md).
-The above configuration is equivalent to:
+There are different ways to configure Kokkos shown in the [build instructions](BUILD.md).
+The above is equivalent to:
 ````
-cmake .. \
+cmake $srcdir \
   -DCMAKE_CXX_COMPILER=$path_to_compiler \
   -DCMAKE_INSTALL_PREFIX=$path_to_install \
   -DKokkos_DEVICES=OpenMP,SERIAL \
@@ -194,7 +194,7 @@ or
 ````
 -DKokkos_ROOT=$path_to_install
 ````
-for install location given above.
+for the install location given above.
 
 
 ## Raw Makefile 
@@ -256,17 +256,17 @@ If you publish work which mentions Kokkos, please cite the following paper:
 
 ````
 @article{CarterEdwards20143202,
-title = "Kokkos: Enabling manycore performance portability through polymorphic memory access patterns ",
-journal = "Journal of Parallel and Distributed Computing ",
-volume = "74",
-number = "12",
-pages = "3202 - 3216",
-year = "2014",
-note = "Domain-Specific Languages and High-Level Frameworks for High-Performance Computing ",
-issn = "0743-7315",
-doi = "https://doi.org/10.1016/j.jpdc.2014.07.003",
-url = "http://www.sciencedirect.com/science/article/pii/S0743731514001257",
-author = "H. Carter Edwards and Christian R. Trott and Daniel Sunderland"
+  title = "Kokkos: Enabling manycore performance portability through polymorphic memory access patterns ",
+  journal = "Journal of Parallel and Distributed Computing ",
+  volume = "74",
+  number = "12",
+  pages = "3202 - 3216",
+  year = "2014",
+  note = "Domain-Specific Languages and High-Level Frameworks for High-Performance Computing ",
+  issn = "0743-7315",
+  doi = "https://doi.org/10.1016/j.jpdc.2014.07.003",
+  url = "http://www.sciencedirect.com/science/article/pii/S0743731514001257",
+  author = "H. Carter Edwards and Christian R. Trott and Daniel Sunderland"
 }
 ````
 

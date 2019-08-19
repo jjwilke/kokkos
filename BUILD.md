@@ -2,6 +2,8 @@
 
 # Building Kokkos
 
+Detailed build instructions coming soon!
+
 
 
 ##### [LICENSE](https://github.com/sstsimulator/sst-core/blob/devel/LICENSE)
