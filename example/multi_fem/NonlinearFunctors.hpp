@@ -121,7 +121,7 @@ struct ElementComputation<FEMesh<ScalarCoordType, ElemNode, DeviceType>,
         element_matrices(arg_element_matrices),
         element_vectors(arg_element_vectors),
         coeff_K(arg_coeff_K) {
-    const size_t elem_count = arg_mesh.elem_node_ids.dimension_0();
+    const size_t elem_count = arg_mesh.elem_node_ids.extent(0);
 
     parallel_for(elem_count, *this);
   }
@@ -368,7 +368,7 @@ struct DirichletSolution<FEMesh<ScalarCoordType, ElemNode, DeviceType>,
     op.bc_upper_z     = bc_upper_z;
     op.bc_lower_value = bc_lower_value;
     op.bc_upper_value = bc_upper_value;
-    parallel_for(solution.dimension_0(), op);
+    parallel_for(solution.extent(0), op);
   }
 };
 
@@ -440,7 +440,7 @@ struct DirichletResidual<FEMesh<ScalarCoordType, ElemNode, DeviceType>,
                     const vector_type& linsys_rhs, const mesh_type& mesh,
                     const ScalarCoordType bc_lower_z,
                     const ScalarCoordType bc_upper_z) {
-    const size_t row_count = linsys_matrix.graph.row_map.dimension_0() - 1;
+    const size_t row_count = linsys_matrix.graph.row_map.extent(0) - 1;
 
     DirichletResidual op;
     op.node_coords = mesh.node_coords;

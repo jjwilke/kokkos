@@ -109,7 +109,7 @@ struct GrowArrayFunctor {
 
     const int j = index >> SHIFT;       // which integer flag
     const int k = 1 << (index & MASK);  // which bit in that integer
-    const int s = (j < int(m_search_flags.dimension_0())) &&
+    const int s = (j < int(m_search_flags.extent(0))) &&
                   (0 != (m_search_flags(j) & k));
 
     return s;
@@ -232,7 +232,7 @@ void grow_array(int array_length, int search_length, int print = 1) {
     flags(entry) &= ~bit;  // Clear that verified bit
   }
 
-  for (int i = 0; i < int(flags.dimension_0()); ++i) {
+  for (int i = 0; i < int(flags.extent(0)); ++i) {
     // If any uncleared bits then an error
     if (flags(i)) {
       if (print) std::cerr << "flags( " << i << " : " << flags(i) << " )";

@@ -169,7 +169,7 @@ PerformanceData run(const typename FixtureType::FEMeshType& mesh,
 
   const comm::Machine machine = mesh.parallel_data_map.machine;
 
-  const size_t element_count = mesh.elem_node_ids.dimension_0();
+  const size_t element_count = mesh.elem_node_ids.extent(0);
 
   //------------------------------------
   // The amount of nonlinearity is proportional to the ratio
@@ -251,11 +251,11 @@ PerformanceData run(const typename FixtureType::FEMeshType& mesh,
   //------------------------------------
   // Allocate linear system coefficients and rhs:
 
-  const size_t local_owned_length = jacobian.graph.row_map.dimension_0() - 1;
-  const size_t local_total_length = mesh.node_coords.dimension_0();
+  const size_t local_owned_length = jacobian.graph.row_map.extent(0) - 1;
+  const size_t local_total_length = mesh.node_coords.extent(0);
 
   jacobian.coefficients = matrix_coefficients_type(
-      "jacobian_coeff", jacobian.graph.entries.dimension_0());
+      "jacobian_coeff", jacobian.graph.entries.extent(0));
 
   // Nonlinear residual for owned nodes:
   residual = vector_type("residual", local_owned_length);
@@ -332,8 +332,8 @@ PerformanceData run(const typename FixtureType::FEMeshType& mesh,
 
     wall_clock.reset();
 
-    fill(jacobian.coefficients.dimension_0(), 0, jacobian.coefficients);
-    fill(residual.dimension_0(), 0, residual);
+    fill(jacobian.coefficients.extent(0), 0, jacobian.coefficients);
+    fill(residual.extent(0), 0, residual);
 
     GatherFillFunctor::apply(jacobian, residual, mesh, element_map,
                              elem_matrices, elem_vectors);

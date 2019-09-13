@@ -6,7 +6,7 @@ KOKKOS_INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../common)
 SET(SOURCES_TEST Main.cpp TestFixture.cpp BoxElemPart.cpp )
 
 # Automatically picks up 'kokkosexample_fixture'
-KOKKOS_ADD_EXECUTABLE_AND_TEST(
+KOKKOS_ADD_EXECUTABLE(
   TestFixture
   SOURCES ${SOURCES_TEST}
 )

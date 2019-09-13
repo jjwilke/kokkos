@@ -148,7 +148,7 @@ struct Fields {
       : num_nodes(mesh.parallel_data_map.count_owned +
                   mesh.parallel_data_map.count_receive),
         num_nodes_owned(mesh.parallel_data_map.count_owned),
-        num_elements(mesh.elem_node_ids.dimension_0()),
+        num_elements(mesh.elem_node_ids.extent(0)),
         lin_bulk_visc(arg_lin_bulk_visc),
         quad_bulk_visc(arg_quad_bulk_visc),
         two_mu(youngs_modulus / (1.0 + poissons_ratio)),

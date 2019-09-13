@@ -262,7 +262,7 @@ struct ElementComputation {
                     const scalar_type elem_coeff_Q) {
     ElementComputation comp(mesh, elem_matrices, elem_vectors, elem_coeff_K,
                             elem_coeff_Q);
-    const size_t elem_count = mesh.elem_node_ids.dimension_0();
+    const size_t elem_count = mesh.elem_node_ids.extent(0);
 
     parallel_for(elem_count, comp);
   }
@@ -536,7 +536,7 @@ struct DirichletBoundary {
                     const ScalarCoordType bc_upper_z,
                     const ScalarType bc_lower_value,
                     const ScalarType bc_upper_value) {
-    const size_t row_count = linsys_matrix.graph.row_map.dimension_0() - 1;
+    const size_t row_count = linsys_matrix.graph.row_map.extent(0) - 1;
     DirichletBoundary op;
     op.node_coords    = mesh.node_coords;
     op.matrix         = linsys_matrix;
