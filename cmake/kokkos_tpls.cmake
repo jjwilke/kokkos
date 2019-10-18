@@ -53,3 +53,9 @@ KOKKOS_IMPORT_TPL(PTHREAD INTERFACE)
 # FIND_PACKAGE(TestLibraryOnly)
 # FIND_PACKAGE(TestCompileOnly)
 
+
+#Convert list to newlines (which CMake doesn't always like in cache varibles)
+STRING(REPLACE ";" "\n" KOKKOS_TPL_EXPORT_TEMP "${KOKKOS_TPL_EXPORTS}")
+#Convert to a regular variable
+UNSET(KOKKOS_TPL_EXPORTS CACHE)
+SET(KOKKOS_TPL_EXPORTS ${KOKKOS_TPL_EXPORT_TEMP})

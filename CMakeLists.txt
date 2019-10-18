@@ -114,16 +114,15 @@ GLOBAL_SET(KOKKOS_LINK_OPTIONS)
 GLOBAL_SET(KOKKOS_CUDA_OPTIONS)
 GLOBAL_SET(KOKKOS_CUDAFE_OPTIONS)
 GLOBAL_SET(KOKKOS_XCOMPILER_OPTIONS)
-
+# We need to append text here for making sure TPLs
+# we import are available for an installed Kokkos
+GLOBAL_SET(KOKKOS_TPL_EXPORTS)
 
 # Include a set of Kokkos-specific wrapper functions that
 # will either call raw CMake or TriBITS
 # These are functions like KOKKOS_INCLUDE_DIRECTORIES
 INCLUDE(${KOKKOS_SRC_PATH}/cmake/kokkos_tribits.cmake)
 
-# We need to append text here for making sure TPLs
-# we import are available for an installed Kokkos
-SET(KOKKOS_TPL_EXPORTS)
 
 # The build environment setup goes in the following steps
 # 1) Check all the enable options. This includes checking Kokkos_DEVICES
