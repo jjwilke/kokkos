@@ -48,12 +48,6 @@ KOKKOS_IMPORT_TPL(LIBDL)
 KOKKOS_IMPORT_TPL(MEMKIND)
 KOKKOS_IMPORT_TPL(PTHREAD INTERFACE)
 
-# These can be included for testing purposes only
-# FIND_PACKAGE(TestHeaderOnly)
-# FIND_PACKAGE(TestLibraryOnly)
-# FIND_PACKAGE(TestCompileOnly)
-
-
 #Convert list to newlines (which CMake doesn't always like in cache varibles)
 STRING(REPLACE ";" "\n" KOKKOS_TPL_EXPORT_TEMP "${KOKKOS_TPL_EXPORTS}")
 #Convert to a regular variable
