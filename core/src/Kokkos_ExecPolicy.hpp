@@ -1012,7 +1012,7 @@ template <typename FunctorType, typename TagType>
 struct ParallelConstructName<FunctorType, TagType, false> {
   ParallelConstructName(std::string const& label) : label_ref(label) {
     if (label.empty()) {
-      default_name = std::string(typeid(FunctorType).name());
+      default_name = typeid(FunctorType).name();
     }
   }
   std::string const& get() {

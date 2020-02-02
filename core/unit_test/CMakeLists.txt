@@ -12,10 +12,8 @@ KOKKOS_ADD_TEST_LIBRARY(
   HEADERS ${GTEST_SOURCE_DIR}/gtest/gtest.h
   SOURCES ${GTEST_SOURCE_DIR}/gtest/gtest-all.cc
 )
-#These can be direct, no need for Tribits or Kokkos wrappers
 TARGET_COMPILE_DEFINITIONS(kokkos_gtest PUBLIC "-DGTEST_HAS_PTHREAD=0")
 TARGET_INCLUDE_DIRECTORIES(kokkos_gtest PUBLIC ${GTEST_SOURCE_DIR})
-#Gtest minimally requires C++11
 TARGET_COMPILE_FEATURES(kokkos_gtest PUBLIC cxx_std_11)
 
 

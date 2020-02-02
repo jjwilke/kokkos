@@ -21,6 +21,7 @@ ENDFUNCTION()
 
 # Certain defaults will depend on knowing the enabled devices
 KOKKOS_CFG_DEPENDS(OPTIONS DEVICES)
+KOKKOS_CFG_DEPENDS(OPTIONS COMPILER_ID)
 
 # Put a check in just in case people are using this option
 KOKKOS_DEPRECATED_LIST(OPTIONS ENABLE)
@@ -47,6 +48,11 @@ KOKKOS_ENABLE_OPTION(PROFILING            ON  "Whether to create bindings for pr
 KOKKOS_ENABLE_OPTION(PROFILING_LOAD_PRINT OFF "Whether to print information about which profiling tools got loaded")
 KOKKOS_ENABLE_OPTION(AGGRESSIVE_VECTORIZATION OFF "Whether to aggressively vectorize loops")
 KOKKOS_ENABLE_OPTION(DEPRECATED_CODE          OFF "Whether to enable deprecated code")
+KOKKOS_ENABLE_OPTION(JIT OFF "Whether to enable JIT testing")
+
+IF (KOKKOS_ENABLE_JIT AND NOT KOKKOS_CXX_COMPILER_ID STREQUAL Clang)
+  MESSAGE(SEND_ERROR "JIT features can only be activated with special fork of Clang")
+ENDIF()
 
 IF (KOKKOS_ENABLE_CUDA)
   SET(KOKKOS_COMPILER_CUDA_VERSION "${KOKKOS_COMPILER_VERSION_MAJOR}${KOKKOS_COMPILER_VERSION_MINOR}")

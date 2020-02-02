@@ -130,6 +130,7 @@ FUNCTION(KOKKOS_ADD_EXECUTABLE EXE_NAME)
     IF (PARSE_TESTONLYLIBS)
       TARGET_LINK_LIBRARIES(${EXE_NAME} PRIVATE ${PARSE_TESTONLYLIBS})
     ENDIF()
+    TARGET_LINK_LIBRARIES(${EXE_NAME} PRIVATE Kokkos::kokkos)
     VERIFY_EMPTY(KOKKOS_ADD_EXECUTABLE ${PARSE_UNPARSED_ARGUMENTS})
     #All executables must link to all the kokkos targets
     #This is just private linkage because exe is final
