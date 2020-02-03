@@ -96,7 +96,7 @@ std::string human_memory_size(size_t arg_bytes) {
 
 void Experimental::RawMemoryAllocationFailure::print_error_message(
     std::ostream &o) const {
-  o << "Allocation of size " << Impl::human_memory_size(m_attempted_size);
+  o << "Allocation of size " << Kokkos::Impl::human_memory_size(m_attempted_size);
   o << " failed";
   switch (m_failure_mode) {
     case FailureMode::OutOfMemoryError:

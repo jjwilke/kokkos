@@ -72,7 +72,7 @@ struct ViewFillLayoutSelector<Kokkos::LayoutRight> {
 }  // namespace Impl
 }  // namespace Kokkos
 
-#include <impl/Kokkos_ViewFillCopyETIAvail.hpp>
+//#include <impl/Kokkos_ViewFillCopyETIAvail.hpp>
 
 namespace Kokkos {
 namespace Impl {
@@ -761,7 +761,7 @@ struct ViewCopy<ViewTypeA, ViewTypeB, Layout, ExecSpace, 8, iType,
 }  // namespace Impl
 }  // namespace Kokkos
 
-#include <impl/Kokkos_ViewFillCopyETIDecl.hpp>
+//#include <impl/Kokkos_ViewFillCopyETIDecl.hpp>
 
 namespace Kokkos {
 namespace Impl {
