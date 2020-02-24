@@ -227,16 +227,16 @@ struct ViewTraits<
     Prop...> {
   // Specify Space, memory traits should be the only subsequent argument.
 
-  static_assert(
-      std::is_same<typename ViewTraits<void, Prop...>::execution_space,
-                   void>::value &&
-          std::is_same<typename ViewTraits<void, Prop...>::memory_space,
-                       void>::value &&
-          std::is_same<typename ViewTraits<void, Prop...>::HostMirrorSpace,
-                       void>::value &&
-          std::is_same<typename ViewTraits<void, Prop...>::array_layout,
-                       void>::value,
-      "Only one View Execution or Memory Space template argument");
+  //static_assert(
+  //    std::is_same<typename ViewTraits<void, Prop...>::execution_space,
+  //                 void>::value &&
+  //        std::is_same<typename ViewTraits<void, Prop...>::memory_space,
+  //                     void>::value &&
+  //        std::is_same<typename ViewTraits<void, Prop...>::HostMirrorSpace,
+  //                     void>::value &&
+  //        std::is_same<typename ViewTraits<void, Prop...>::array_layout,
+  //                     void>::value,
+  //    "Only one View Execution or Memory Space template argument");
 
   typedef typename Space::execution_space execution_space;
   typedef typename Space::memory_space memory_space;
