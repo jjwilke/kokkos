@@ -110,3 +110,15 @@ ENDIF()
 IF (KOKKOS_ENABLE_CUDA_RELOCATABLE_DEVICE_CODE AND KOKKOS_CXX_COMPILER_ID STREQUAL Clang)
   MESSAGE(FATAL_ERROR "Relocatable device code is currently not supported with Clang - must use nvcc_wrapper or turn off RDC")
 ENDIF()
+
+KOKKOS_ENABLE_OPTION(TEMPLIGHT_MEMORY OFF "Whether to use templight for compiler memory usage profiling")
+IF (KOKKOS_ENABLE_TEMPLIGHT)
+  GLOBAL_APPEND(KOKKOS_COMPILE_OPTIONS
+    "SHELL: -Xtemplight -profiler"
+    "SHELL: -Xtemplight -ignore-system")
+  IF (KOKKOS_ENABLE_TEMPLIGHT_MEMORY)
+    GLOBAL_APPEND(KOKKOS_COMPILE_OPTIONS "SHELL: -Xtemplight -memory")
+  ENDIF()
+ELSEIF (KOKKOS_ENABLE_TEMPLIGHT_MEMORY)
+  MESSAGE(WARNING "Templight memory profiling requested, but templight++ is not the C++ compiler")
+ENDIF()
