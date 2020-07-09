@@ -9,7 +9,7 @@ for C++.  Applications heavily leveraging Kokkos are strongly encouraged to use 
 
 You can either use Kokkos as an installed package (encouraged) or use Kokkos in-tree in your project.
 Modern CMake is exceedingly simple at a high-level (with the devil in the details).
-Once Kokkos is installed In your `CMakeLists.txt` simply use:
+Once Kokkos is installed, in your `CMakeLists.txt` simply use:
 ````
 find_package(Kokkos REQUIRED)
 ````
@@ -17,6 +17,13 @@ Then for every executable or library in your project:
 ````
 target_link_libraries(myTarget Kokkos::kokkos)
 ````
+To locate the Kokkos package, configure your project with `-DKokkos_ROOT=<KOKKOS_INSTALL_PREFIX>`.
+If using an older version of CMake, you may need to include the following in your CMakeLists.txt:
+````
+cmake_policy(SET CMP0074 NEW)
+````
+For full details on how CMake locates packages, consult the [find_package documentation](https://cmake.org/cmake/help/latest/command/find_package.html)
+
 That's it! There is no checking Kokkos preprocessor, compiler, or linker flags.
 Kokkos propagates all the necessary flags to your project.
 This means not only is linking to Kokkos easy, but Kokkos itself can actually configure compiler and linker flags for *your*
@@ -98,6 +105,12 @@ Device backends can be enabled by specifying `-DKokkos_ENABLE_X`.
 * Kokkos_ENABLE_OPENMP
     * Whether to build OpenMP backend
     * BOOL Default: OFF
+* Kokkos_ENABLE_OPENMPTARGET
+    * Whether to build OpenMP target backend
+    * BOOL Default: OFF
+* Kokkos_ENABLE_HIP
+    * Whether to build the HIP backend
+    * BOOL Default: OFF
 * Kokkos_ENABLE_PTHREAD
     * Whether to build Pthread backend
     * BOOL Default: OFF
@@ -125,6 +138,9 @@ Options can be enabled by specifying `-DKokkos_ENABLE_X`.
     * BOOL Default: OFF
 * Kokkos_ENABLE_CUDA_RELOCATABLE_DEVICE_CODE
     * Whether to enable relocatable device code (RDC) for CUDA
+    * BOOL Default: OFF
+* Kokkos_ENABLE_HIP_RELOCATABLE_DEVICE_CODE
+    * Whether to enable relocatable device code (RDC) for HIP
     * BOOL Default: OFF
 * Kokkos_ENABLE_CUDA_UVM
     * Whether to use unified memory (UM) by default for CUDA
