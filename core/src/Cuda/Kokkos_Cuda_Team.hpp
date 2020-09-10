@@ -525,6 +525,12 @@ class CudaTeamMember {
 #endif
   }
 
+  __device__ CudaTeamMember set_league_rank(int rank) const {
+    CudaTeamMember copy(*this);
+    copy.m_league_rank = rank;
+    return copy;
+  }
+
   //----------------------------------------
   // Private for the driver
 
