@@ -475,6 +475,14 @@ class HostThreadTeamMember {
   KOKKOS_INLINE_FUNCTION
   int league_size() const noexcept { return m_league_size; }
 
+  KOKKOS_INLINE_FUNCTION
+  int vector_length() const noexcept { return 1; }
+
+  HostThreadTeamMember shrink_league(int skip) const {
+    HostThreadTeamMember team(m_data, m_league_rank - skip, m_league_size - skip);
+    return team;
+  }
+
   //----------------------------------------
 
   KOKKOS_INLINE_FUNCTION
